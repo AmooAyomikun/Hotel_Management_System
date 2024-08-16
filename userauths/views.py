@@ -41,7 +41,7 @@
 #     return render(request, "userauths/sign-up.html", context)
 
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -73,8 +73,46 @@ def RegisterView(request):
 
         return redirect('hotel:index')
 
+    form = UserRegisterForm(request.POST or None)
     context = {"form": form}
     return render(request, "userauths/sign-up.html", context)
 
 
+def loginViewTemp(request):
+    if request.user.is_authenticated:
+        messages.warning(request, "You are already logged in")
+        return redirect('hotel:index')
+    
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        try:
+            # To check if a user exist
+            user_query = User.objects.get(email=email)   
+
+            # for authentication, to log the user in
+            user_auth = authenticate(request, email=email, password=password)
+
+            if user_query is not None:
+                login(request, user_auth)
+                messages.success(request, "You are Logged In")
+                # return redirect()
+                next_url = request.GET.get("next", 'hotel:index')
+                return redirect(next_url)
+
+            else:
+                messages.error(request, 'Username or password does not exit.')
+                return redirect("userauths:sign-in")
+        except:
+            messages.error(request, 'User does not exist')
+            return redirect("userauths:sign-in")
+
+
+    return render(request, "userauths/sign-in.html")
+
+def LogoutView(request):
+    logout(request)
+    messages.success(request, 'You have been logged out')
+    return redirect("userauths:sign-in")
 

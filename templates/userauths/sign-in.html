@@ -2,13 +2,12 @@
 
 {% extends 'partials/base.html' %}
 {% load static %}
-
 {% block content %}
     <div class="fullwidth_block search_categorie_block">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h3 class="headline_part centered margin-top-75 margin-bottom-45">Sign Up <span>Hi there! Create a free account today.</span></h3>
+                    <h3 class="headline_part centered margin-top-75 margin-bottom-45">Sign In <span>Welcome back, Login Now.</span></h3>
                 </div>
             </div>
         </div>
@@ -26,7 +25,8 @@
                                     <div class="tab_content" id="tab2" style="display: none;">
                                         <form method="POST" class="register">
                                             {% csrf_token %}
-                                            {{form.as_p}}
+                                            <input type = "text" placeholder="Enter Email" name="email" id="">
+                                            <input type = "password" placeholder="Enter Password" name="password" id="">
                                             {% comment %} {{form.full_name}}
                                             {{form.username}}
                                             {{form.email}}
@@ -55,8 +55,6 @@
     </div>
     <div class="clearfix"></div>
 {% endblock content %}
-
-            
 
 
             
