@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 
+from environs  import Env
+
+env = Env()
+env.read_env()
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,7 +33,7 @@ SECRET_KEY = 'django-insecure-19kcke25)vr!-su9=n6b387dufjyfrn=(#%d=xmynzu0jkex$y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -61,6 +66,7 @@ INSTALLED_APPS = [
 ]
 
 TAGGIT_CASE_INSENSITIVE = True
+DEBUG = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -102,6 +108,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 
 # Password validation
@@ -163,7 +170,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "userauths.User"
 
+SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups'
 
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
+STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY")
+
+LOGIN_URL ="userauths:sign-in"
+LOGOUT_REDIRECT_URL ="userauths:sign-in"
+
+# from django.utils.translation import ugettext_lazy as _o
 
 JAZZMIN_SETTINGS = {
     'site_header': "Hotel Management System",

@@ -19,12 +19,25 @@ HOTEL_STATUS = (
     ("Live", "Live"),
 )
 
+RATING = (
+    ( 1,  "★☆☆☆☆"),
+    ( 2,  "★★☆☆☆"),
+    ( 3,  "★★★☆☆"),
+    ( 4,  "★★★★☆"),
+    ( 5,  "★★★★★"),
+)
+
 ICON_TPYE = (
     ('Bootstap Icons', 'Bootstap Icons'),
     ('Fontawesome Icons', 'Fontawesome Icons'),
     ('Box Icons', 'Box Icons'),
     ('Remi Icons', 'Remi Icons'),
     ('Flat Icons', 'Flat Icons')
+)
+
+NOTIFICATION_TYPE = (
+    ("Booking Confirmed", "Booking Confirmed"),
+    ("Booking Cancelled", "Booking Cancelled"),
 )
 
 PAYMENT_STATUS = (
@@ -86,13 +99,14 @@ class Hotel(models.Model):
     def hotel_room_types(self):
         return RoomType.objects.filter(hotel=self)
     
-    # def average_rating(self):
-    #     average_rating = Review.objects.filter(hotel=self, active=True).aggregate(avg_rating=models.Avg("rating"))
-    #     return average_rating['avg_rating']
+    def average_rating(self):
+        average_rating = Review.objects.filter(hotel=self).aggregate(avg_rating=models.Avg("rating"))
+        return average_rating['avg_rating']
     
-    # def rating_count(self):
-    #     rating_count = Review.objects.filter(hotel=self, active=True).count()
-    #     return rating_count
+    def rating_count(self):
+        rating_count = Review.objects.filter(hotel=self).count()
+        return rating_count
+       
 
 class HotelGallery(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
@@ -180,9 +194,29 @@ class Room(models.Model):
         return self.room_type.number_of_beds
 
 
+class Coupon(models.Model):
+    code = models.CharField(max_length=1000)
+    type = models.CharField(max_length=100, default="Percentage")
+    discount = models.IntegerField(default=1, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    redemption = models.IntegerField(default=0)
+    date = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
+    make_public = models.BooleanField(default=False)
+    valid_from = models.DateField()
+    valid_to = models.DateField()
+    cid = ShortUUIDField(length=10, max_length=25, alphabet="abcdefghijklmnopqrstuvxyz")
+
+    
+    def __str__(self):
+        return self.code
+    
+    class Meta:
+        ordering =['-id']
+
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     payment_status = models.CharField(max_length=100, choices=PAYMENT_STATUS, default="initiated")
+    
 
     full_name = models.CharField(max_length=1000)
     email = models.EmailField(max_length=1000)
@@ -212,9 +246,9 @@ class Booking(models.Model):
     
     bid = ShortUUIDField(unique = True, length = 10, max_length = 20, alphabet="abcdefghijklmnopqrstuvxyz")
     date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    # coupons = models.ManyToManyField("hotel.Coupon", blank=True)
+    coupons = models.ManyToManyField("hotel.Coupon", blank=True)
     stripe_payment_intent = models.CharField(max_length=1000,null=True, blank=True)
-    success_id = ShortUUIDField(length=300, max_length=505, alphabet="abcdefghijklmnopqrstuvxyz1234567890")
+    success_id = ShortUUIDField(length=10, max_length=20, alphabet="abcdefghijklmnopqrstuvxyz", null =True, blank = True)
     booking_id = ShortUUIDField(unique=True, length=10, max_length=20, alphabet="abcdefghijklmnopqrstuvxyz")
 
 
@@ -234,6 +268,21 @@ class ActivityLog(models.Model):
     def __str__(self):
         return f"(self.booking)"
 
+class CouponUsers(models.Model):
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE)
+    
+    full_name = models.CharField(max_length=1000)
+    email = models.CharField(max_length=1000)
+    mobile = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return str(self.coupon.code)
+    
+    class Meta:
+        ordering =['-id']
+
+
 class StaffOnDuty(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
     staff_id = models.CharField(null=True, blank=True, max_length=100)
@@ -241,3 +290,67 @@ class StaffOnDuty(models.Model):
 
     def __str__(self):
         return str(self.staff_id)
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="user")
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, null=True, blank=True)
+    type = models.CharField(max_length=100, default="new_order", choices=NOTIFICATION_TYPE)
+    seen = models.BooleanField(default=False)
+    nid = ShortUUIDField(unique=True, length=10, max_length=20, alphabet="abcdefghijklmnopqrstuvxyz")
+    date= models.DateField(auto_now_add=True)
+    
+    def __str__(self):
+        return str(self.user.username)
+    
+    class Meta:
+        ordering = ['-date']
+
+
+class Bookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, null=True, blank=True)
+    bid = ShortUUIDField(unique=True, length=10, max_length=20, alphabet="abcdefghijklmnopqrstuvxyz")
+    date= models.DateField(auto_now_add=True)
+    
+    def __str__(self):
+        return str(self.user.username)
+    
+    class Meta:
+        ordering = ['-date']
+
+
+# class Review(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True)
+#     hotel = models.ForeignKey(Hotel, on_delete=models.PROTECT, blank=True, null=True, related_name="reviews")
+#     review = models.TextField(null=True, blank=True)
+#     reply = models.CharField(null=True, blank=True, max_length=1000)
+#     rating = models.IntegerField(choices=RATING, default=None)
+#     active = models.BooleanField(default=False)
+#     helpful = models.ManyToManyField(User, blank=True, related_name="helpful")
+#     date = models.DateTimeField(auto_now_add=True)
+
+#     class Meta:
+#         verbose_name_plural = "Reviews & Rating"
+#         ordering = ["-date"]
+        
+#     def __str__(self):
+#         return f"{self.user.username} - {self.rating}"
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    hotel = models.ForeignKey(Hotel, on_delete=models.SET_NULL, blank=True, null=True, related_name="reviews")
+    review = models.TextField(null=True, blank=True)
+    reply = models.CharField(null=True, blank=True, max_length=1000)
+    rating = models.IntegerField(choices=RATING, default=None)
+    active = models.BooleanField(default=False)
+    helpful = models.ManyToManyField(User, blank=True, related_name="helpful")
+    date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Reviews & Rating"
+        ordering = ["-date"]
+        
+    def __str__(self):
+        return f"{self.user.username} - {self.rating}"
+        

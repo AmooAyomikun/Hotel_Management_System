@@ -40,13 +40,14 @@
                     <li>Beds: {{r.room_type.number_of_beds}} </li>
                     <li>Room Capacity: {{r.room_type.room_capacity}}</li>
                   </ul>
-                  <input type="hidden" class="" value="" id="room_id">
-                  <input type="hidden" class="" value="" id="room_number">
+                  <input type="hidden" class="room_id_{{r.id}}" value="{{r.id}}" id="room_id">
+                  <input type="hidden" class="room_number_{{r.id}}" value="{{r.room_number}}" id="room_number" >
 
-                  <button class="button border "><i class="fas fa-shopping-cart"></i> Add To Selection</button> 
+                  <button class="button border add-to-selection" data-index={{r.id}}><i class="fas fa-shopping-cart"></i> Add To Selection</button> 
               </div>
               </div>
           {% endfor %}
+          
           <input type="hidden" value="{{hotel.id}}" id="id">
           <input type="hidden" value="{{hotel.name}}" id="hotel_name">
           <input type="hidden" value="{{room_type.type}}" id="room_name">
@@ -80,7 +81,7 @@
                           <div class="panel-dropdown-content">
                               <div class="qtyButtons">
                                   <div class="qtyTitle">Adults</div>
-                                  {% comment %} <input type="text" name="adult" {% if adult == None %}value="1"{% else %}value="{{adult}}"{% endif %}> {% endcomment %}
+                                  <input type="text" name="adult" {% if adult == None %}value="1"{% else %}value="{{adult}}"{% endif %}>
                               </div>
                               <div class="qtyButtons">
                                   <div class="qtyTitle">Childrens</div>
@@ -126,5 +127,8 @@
         });
     })
   </script>
+  {% comment %} <script>
+    var addToSelectionUrl = "{% url 'hotel:add_to_selection' %}";
+  </script> {% endcomment %}
   
 {% endblock content %}

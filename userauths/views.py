@@ -73,7 +73,7 @@ def RegisterView(request):
 
         return redirect('hotel:index')
 
-    form = UserRegisterForm(request.POST or None)
+    # form = UserRegisterForm(request.POST or None)
     context = {"form": form}
     return render(request, "userauths/sign-up.html", context)
 

@@ -17,17 +17,49 @@
                 <div class="col-lg-8 col-md-8">
                     <div id="titlebar" class="utf_listing_titlebar">
                         <div class="utf_listing_titlebar_title">
-                            <h2>{{hotel.name}} <span class="listing-tag">Music Fair</span></h2>
+                            <h2>{{hotel.name}}</h2><br>
                             <span><i class="fa fa-map-market"></i>{{hotel.address}}</span> <br>
                             <span><i class="fa fa-phone"></i>{{hotel.mobile}}</span> <br>
                             <span><i class="fa fa-envelop"></i>{{hotel.email}}</span> <br>
                         
                             <div class="utf_star_rating_section" data-rating="4.5">
-                                <div class="utf_counter_star_rating">(4.5) / (14 Reviews)</div>
+                                <div class="utf_counter_star_rating"> ({{hotel.average_rating}}/5.0) / ({{hotel.rating_count.count}} Reviews)</div>
                             </div>
+
                             <ul class="listing_item_social">
-                                <li><a href="#"><i class="fa fa-bookmark"></i> Bookmark</a></li>
-                                <li><a href="#"><i class="fa fa-star"></i> Add Review</a></li>
+                                {% if bookmark %}
+                                    <li>
+                                        <a  data-hotel="{{hotel.id}}" class= "add-to-bookmark-{{hotel.id}}" id="add-to-bookmark"><i class="fa fa-heart" style="color: red;"></i></a>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <a  data-hotel="{{hotel.id}}" class= "add-to-bookmark-{{hotel.id}}" id="add-to-bookmark"><i class="fa fa-heart" style="color: gray;"></i></a>
+                                    </li>
+                                {% endif %}
+
+                            
+                                {% comment %} <li><a href="#"><i class="fa fa-heart"></i></a></li> {% endcomment %}
+                                {% if not reviews %}
+                                <li>
+                                    <a href="#small-dialog" class="popup-with-zoom-anim" id="add-review-button"><i class="fa fa-star"></i> Add Review</a>
+                                </li>
+                                <div id="small-dialog" class="zoom-anim-dialog mfp-hide">
+                                    <div class="small_dialog_header">
+                                    <h3 class="review_text">Write a review</h3>
+                                    </div>
+                                    <div class="utf_message_reply_block margin-top-0" id="review_div">
+                                    <textarea cols="40" rows="3" id="review-input" placeholder="Your Message..."></textarea>
+                                    <select name="" id="rating-input">
+                                        <option value="1">★☆☆☆☆</option>
+                                        <option value="2">★★☆☆☆</option>
+                                        <option value="3">★★★☆☆</option>
+                                        <option value="4">★★★★☆</option>
+                                        <option value="5">★★★★★</option>
+                                    </select>
+                                    <button data-hotel="{{hotel.id}}" class="button" id="review-btn">Reply Message</button>
+                                    </div>
+                                </div>
+                                {% endif %}
                                 <li><a href="#"><i class="fa fa-flag"></i> Featured</a></li>
                                 <li><a href="#"><i class="fa fa-share"></i> Share</a></li>
                                 <li><a href="#" class="now_open">Open Now</a></li>
@@ -40,15 +72,14 @@
                         <div id="utf_listing_tags" class="utf_listing_section listing_tags_section margin-bottom-10 margin-top-0">
                             <a href="#"><i class="sl sl-icon-phone" aria-hidden="true"></i> {{hotel.mobile}}</a>
                             <a href="#"><i class="fa fa-envelope-o" aria-hidden="true"></i> {{hotel.email}}</a>
-                            <a href="#"><i class="sl sl-icon-globe" aria-hidden="true"></i> www.example.com | Hotel website</a>
                         </div>
-                        <div class="social-contact">
+                        {% comment %} <div class="social-contact">
                             <a href="#" class="facebook-link"><i class="fa fa-facebook"></i> Facebook</a>
                             <a href="#" class="twitter-link"><i class="fa fa-twitter"></i> Twitter</a>
                             <a href="#" class="instagram-link"><i class="fa fa-instagram"></i> Instagram</a>
                             <a href="#" class="linkedin-link"><i class="fa fa-linkedin"></i> Linkedin</a>
                             <a href="#" class="youtube-link"><i class="fa fa-youtube-play"></i> Youtube</a>
-                        </div>
+                        </div> {% endcomment %}
                     </div>
 
                     <div id="utf_listing_tags" class="utf_listing_section listing_tags_section">
@@ -128,150 +159,35 @@
                         </div>
                     </div>
                     <div id="utf_listing_reviews" class="utf_listing_section">
-                        <h3 class="utf_listing_headline_part margin-top-75 margin-bottom-20">Reviews <span>(08)</span></h3>
+                        <h3 class="utf_listing_headline_part margin-top-75 margin-bottom-20">Reviews <span>{{hotel.rating_count.count}}</span></h3>
                         <div class="clearfix"></div>
                         <div class="reviews-container">
                             <div class="row">
                                 <div class="col-lg-3">
                                     <div id="review_summary">
-                                        <strong>4.5</strong>
-                                        <em>Superb Reviews</em>
-                                        <small>Out of 15 Reviews</small>
-                                    </div>
-                                </div>
-                                <div class="col-lg-9">
-                                    <div class="row">
-                                        <div class="col-lg-2 review_progres_title"><small><strong>Quality</strong></small></div>
-                                        <div class="col-lg-9">
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-1 review_progres_title"><small><strong>77</strong></small></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-2 review_progres_title"><small><strong>Space</strong></small></div>
-                                        <div class="col-lg-9">
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-1 review_progres_title"><small><strong>15</strong></small></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-2 review_progres_title"><small><strong>Price</strong></small></div>
-                                        <div class="col-lg-9">
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-1 review_progres_title"><small><strong>18</strong></small></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-2 review_progres_title"><small><strong>Service</strong></small></div>
-                                        <div class="col-lg-9">
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-1 review_progres_title"><small><strong>10</strong></small></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-2 review_progres_title"><small><strong>Location</strong></small></div>
-                                        <div class="col-lg-9">
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-1 review_progres_title"><small><strong>05</strong></small></div>
+                                        <strong>{{hotel.average_rating}}</strong>
+                                        <em> Reviews</em>
+                                        <small>Out of {{hotel.rating_count.count}} Reviews</small>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="comments utf_listing_reviews">
                             <ul>
+                                {% for r in all_reviews %}
                                 <li>
-                                    <div class="avatar"><img src="images/client-avatar1.jpg" alt="" /></div>
+                                    <div class="avatar"><img src="{{ r.user.profile.image.url }}" alt="" /></div>
                                     <div class="utf_comment_content">
                                         <div class="utf_arrow_comment"></div>
-                                        <div class="utf_star_rating_section" data-rating="5"></div>
-                                        <a href="#" class="rate-review">Helpful Review <i class="fa fa-thumbs-up"></i></a>
-                                        <div class="utf_by_comment">Francis Burton<span class="date"><i class="fa fa-clock-o"></i> Jan 05, 2022 - 8:52 am</span> </div>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar nisi tincidunt.
-                                            Aliquam erat volutpat.</p>
+                                        <div class="utf_star_rating_section" data-rating="5">{{r.rating}}</div>
+                                        <div class="utf_by_comment">{{ a.user.profile.full_name.url }}<span class="date"><i class="fa fa-clock-o"></i> {{r.date}} </span> </div>
+                                        <p>{{r.review}} </p>
                                     </div>
                                 </li>
-                                <li>
-                                    <div class="avatar"><img src="images/client-avatar2.jpg" alt="" /> </div>
-                                    <div class="utf_comment_content">
-                                        <div class="utf_arrow_comment"></div>
-                                        <div class="utf_star_rating_section" data-rating="4"></div>
-                                        <a href="#" class="rate-review">Helpful Review <i class="fa fa-thumbs-up"></i></a>
-                                        <div class="utf_by_comment">Francis Burton<span class="date"><i class="fa fa-clock-o"></i> Jan 05, 2022 - 8:52 am</span> </div>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar nisi tincidunt.
-                                            Aliquam erat volutpat.</p>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="avatar"><img src="images/client-avatar3.jpg" alt="" /> </div>
-                                    <div class="utf_comment_content">
-                                        <div class="utf_arrow_comment"></div>
-                                        <div class="utf_star_rating_section" data-rating="4"></div>
-                                        <div class="utf_by_comment">Francis Burton<span class="date"><i class="fa fa-clock-o"></i> Jan 05, 2022 - 8:52 am</span> </div>
-                                        <a href="#" class="rate-review">Helpful Review <i class="fa fa-thumbs-up"></i></a>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar nisi tincidunt.
-                                            Aliquam erat volutpat.</p>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="avatar"><img src="images/client-avatar1.jpg" alt="" /></div>
-                                    <div class="utf_comment_content">
-                                        <div class="utf_arrow_comment"></div>
-                                        <div class="utf_star_rating_section" data-rating="4.5"></div>
-                                        <div class="utf_by_comment">Francis Burton<span class="date"><i class="fa fa-clock-o"></i> Jan 05, 2022 - 8:52 am</span> </div>
-                                        <a href="#" class="rate-review">Helpful Review <i class="fa fa-thumbs-up"></i></a>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar nisi tincidunt.
-                                            Aliquam erat volutpat.</p>
-                                        <div class="review-images utf_gallery_container">
-                                            <a href="images/review-image-01.jpg" class="utf_gallery"><img src="images/review-image-01.jpg" alt=""></a>
-                                            <a href="images/review-image-02.jpg" class="utf_gallery"><img src="images/review-image-02.jpg" alt=""></a>
-                                            <a href="images/review-image-03.jpg" class="utf_gallery"><img src="images/review-image-03.jpg" alt=""></a>
-                                            <a href="images/review-image-01.jpg" class="utf_gallery"><img src="images/review-image-01.jpg" alt=""></a>
-                                            <a href="images/review-image-02.jpg" class="utf_gallery"><img src="images/review-image-02.jpg" alt=""></a>
-                                            <a href="images/review-image-03.jpg" class="utf_gallery"><img src="images/review-image-03.jpg" alt=""></a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="avatar"><img src="images/client-avatar3.jpg" alt="" /> </div>
-                                    <div class="utf_comment_content">
-                                        <div class="utf_arrow_comment"></div>
-                                        <div class="utf_star_rating_section" data-rating="4"></div>
-                                        <div class="utf_by_comment">Francis Burton<span class="date"><i class="fa fa-clock-o"></i> Jan 05, 2022 - 8:52 am</span> </div>
-                                        <a href="#" class="rate-review">Helpful Review <i class="fa fa-thumbs-up"></i></a>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar nisi tincidunt.
-                                            Aliquam erat volutpat.</p>
-                                    </div>
-                                </li>
+                                {% endfor %}    
                             </ul>
                         </div>
-                        <div class="clearfix"></div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="utf_pagination_container_part margin-top-30">
-                                    <nav class="pagination">
-                                        <ul>
-                                            <li><a href="#"><i class="sl sl-icon-arrow-left"></i></a></li>
-                                            <li><a href="#" class="current-page">1</a></li>
-                                            <li><a href="#">2</a></li>
-                                            <li><a href="#">3</a></li>
-                                            <li><a href="#"><i class="sl sl-icon-arrow-right"></i></a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
+                        
                     </div>
                     <div id="utf_add_review" class="utf_add_review-box">
                         <h3 class="utf_listing_headline_part margin-bottom-20">Add Your Review</h3>
@@ -334,17 +250,30 @@
                     <div class="utf_box_widget booking_widget_box">
                         <h3><i class="fa fa-calendar"></i> Check Room Availability </h3>
                         <div class="row with-forms margin-top-0">
-                            <form class="row with-forms margin-top-0" method="POST" action="="{% url 'booking:check_room_availability' %}">
+                            {% comment %} <form class="row with-forms margin-top-0" method="POST" action="="{% url 'booking:check_room_availability' %}" > {% endcomment %}
+                                <form class="row with-forms margin-top-0" method="POST" action="{% url 'booking:check_room_availability' %}">
                                 {% csrf_token %}
-                                <input type="hidden" value="" name="hotel-id" id="">
+
+                                <!--Hotel ID-->
+                                <input type="hidden" value="{{hotel.id}}" name="hotel-id" id="">
+
                                 <div class="col-lg-12 col-md-12 select_date_box">
                                     <label for="">Check-in Date</label>
-                                    <input type="date" id="date-picker" value="{{checkin}}" name="checkin" placeholder="Select Date">
+                                    <input type="date"  value="" class="checkin-date" name="checkin" placeholder="Select Date">
                                 </div>
                                 <div class="col-lg-12 col-md-12 select_date_box">
                                     <label for="">Check-out Date</label>
-                                    <input type="date" class="checkout_date" name="checkout" value="{{checkout}}"  placeholder="Select Date">
+                                    <input type="date" class="checkout_date checkout-date" name="checkout" value="{{checkout}}"  placeholder="Select Date">
                                 </div>
+                                
+                                <script>
+                                    const today = new Date();
+                                    const formattedToday = today.toISOString().split("T")[0];
+                                    console.log(formattedToday);
+                                    document.querySelector(".checkout-date").min = formattedToday
+                                    document.querySelector(".checkin-date").min = formattedToday
+                                </script>
+
                                 <div class="with-forms">
                                     <div class="col-lg-12 col-md-12">
                                         <a href="#">Guests <span class="qtyTotal" name="qtyTotal">1</span></a>
@@ -364,7 +293,7 @@
                                 <div class="with-forms margin-top-30">
                                     <div class="col-lg-12 col-md-12 ">
                                         <a href="#">Select Room Type</a>
-                                        <select name="room-type" class="utf_chosen_select_single" required>
+                                        <select name="room-type" class="utf_chosen_select_single" >
                                             <!-- <option value="{{room_type|lower}}">{{room_type}}</option> -->
                                             <option value="">{{room_type}}</option>
               
@@ -688,5 +617,90 @@
             </div>
         </section>
 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+<script>
+    $(document).on('click', '#add-to-bookmark', function(event){
+        let button = $(this)
+        let id = button.attr("data-hotel")
+        console.log(id);
+    
+        $.ajax({
+            url:"/dashboard/add_to_bookmark/",
+            beforeSend: function(){
+                console.log("Add to bookmark.....")
+            },
+            data: {
+                "id": id
+            },
+            success: function(res){
+                if(res.data == "Bookmark Deleted") {
+                    button.html('<i class="fa fa-heart" style="color: gray;"></i>')
+                } else {
+                    button.html('<i class="fa fa-heart" style="color: red;"></i>')
+                }
+                if(res.data  == "Login To Bookmark Hotel") {
+                    alert("Login To Bookmark Hotel")
+                }
+                
+                const Toast =  Swal.mixin({
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                })
+                Toast.fire({
+                    icon: res.icon,
+                    title: res.data,
+                })
+            }
+        });
+    })
+    
+    
+    // Add Review and Rating
+    $(document).on('click', '#review-btn', function(){
+        let button = $(this)
+        let id = button.attr("data-hotel");
+        let review = $("#review-input").val();
+        let rating = $("#rating-input").val();
+
+        $.ajax({
+            url:"/dashboard/add_review/",
+            beforeSend: function(){
+                console.log("Adding Review.....")
+            },
+            data: {
+                "id": id,
+                "review": review,
+                "rating": rating,
+            },
+            success: function(res){
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 1000,
+                })
+                    
+                Toast.fire({
+                    icon: res.icon,
+                    title: res.data
+                })
+
+                $("#add-review-button").hide()
+                $("#review_div").html('Review submitted successfully <i class="fas fa-check-circle"></i> ')
+                
+            }
+        })
+         
+
+            
+
+    }) 
+
+</script>
 
 {% endblock content %}  

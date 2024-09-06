@@ -23,8 +23,8 @@
                                     <!-- <li class=""><a href="#tab1">Log In</a></li> -->
                                 </ul>
                                 <div class="tab_container alt">
-                                    <div class="tab_content" id="tab2" style="display: none;">
-                                        <form method="POST" class="register">
+                                    <div class="tab_content" id="tab2" >
+                                        <form method="POST" class="register" >
                                             {% csrf_token %}
                                             {{form.as_p}}
                                             {% comment %} {{form.full_name}}

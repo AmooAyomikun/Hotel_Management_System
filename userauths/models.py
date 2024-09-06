@@ -45,7 +45,7 @@
 #         return self.username
 
 
-# # PROFILE MODEL
+#PROFILE MODEL
 # class profile(models.Model):
 #     pid = ShortUUIDField(length = 7, max_length =25, alphabet = "abcdefghijklmnopqrstuvwxyz123456789")
 #     image = models.FileField(upload_to = user_directory_path, default= "default.jpg", null = True, blank = True)

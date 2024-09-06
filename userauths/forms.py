@@ -38,7 +38,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
-from .models import User
+from .models import Profile, User
+from django.forms import FileInput
 
 class UserRegisterForm(UserCreationForm):
     full_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': "Enter Full Name"}), max_length=100, required=True)
@@ -62,3 +63,29 @@ class UserRegisterForm(UserCreationForm):
         
         return cleaned_data
 
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['email']
+
+class ProfileUpdateForm(forms.ModelForm):
+    
+    class Meta:
+        model = Profile
+        fields = [
+            'image',
+            'full_name', 
+            'phone',
+            'gender',
+            'country',
+            'city',
+            'state',
+            'address',
+            'identity_type',
+            'identity_image',
+            'facebook',
+            'twitter',
+        ]
+        widgets = {
+            'image': FileInput(attrs={'onchange': 'loadFile(event)', 'class':'upload'}),
+        }
