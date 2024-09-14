@@ -13,30 +13,115 @@
                     <div class="col-md-12">
                         <h2>Book Unique Experiences</h2>
                         <h4>Discover top rated hotels, shops and restaurants around the world</h4>
-                        <div class="main_input_search_part">
-                            <div class="main_input_search_part_item">
-                                <input type="text" placeholder="Hotel, City..." value="" />
+                        <form action="{% url 'hotel:hotel_hotels' %}" method="GET">
+                            {% csrf_token%}
+                            <div class="main_input_search_part">
+                                <div class="main_input_search_part_item">
+                                    <input type="text" placeholder="Enter address" required name= "address" />
+                                </div>
+                                
+                                <button class="button">Search</button>
                             </div>
-                            <div class="main_input_search_part_item main-search-input-item search-input-icon">
-                                <input type="text" placeholder="Select Booking Date" id="booking-date-search" />
-                                <i class="fa fa-calendar"></i>
-                            </div>
-                            <div class="main_input_search_part_item intro-search-field">
-                                <select data-placeholder="All Categories" class="selectpicker default" title="All Categories" data-live-search="true" data-selected-text-format="count" data-size="5">
-                                    <option>Food & Restaurants </option>
-                                    <option>Shop & Education</option>
-                                    <option>Education</option>
-                                    <option>Business</option>
-                                    <option>Events</option>
-                                </select>
-                            </div>
-                            <button class="button" onclick="window.location.href='listings_half_screen_map_list.html'">Search</button>
-                        </div>
+                        </form>
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {% comment %} <ul>
+        {% if address and hotels %}
+            {% for hotel in hotels %}
+                <li>
+                    <h2>{{ hotel.name }}</h2>
+                    <p><strong>Address:</strong> {{ hotel.address }}</p>
+                    <p><strong>Reviews:</strong> {{ hotel.reviews }}</p>
+                    <p><strong>Rating:</strong> {{ hotel.rating }}</p>
+                    {% if hotel.image %}
+                        <img src="{{ hotel.image.url }}" alt="{{ hotel.name }}" width="200" />
+                    {% endif %}
+                    <p><strong>Distance:</strong> {{ hotel.distance|floatformat:2 }} meters</p>
+                </li>
+            {% endfor %}
+        {% elif address %}
+            <li>No hotels found for the searched address.</li>
+        {% else %}
+            <li></li>
+        {% endif %}
+    </ul> {% endcomment %}
+    {% comment %} <ul>
+        {% if address and hotels %}
+            {% for hotel in hotels %}
+                <li>
+                    <h2>{{ hotel.name }}</h2>
+                    <p><strong>Address:</strong> {{ hotel.address }}</p>
+                    <p><strong>Reviews:</strong> {{ hotel.reviews }}</p>
+                    <p><strong>Rating:</strong> {{ hotel.rating }}</p>
+                    {% if hotel.image %}
+                        <img src="{{ hotel.image }}" alt="{{ hotel.name }}" width="200" />
+                    {% endif %}
+                    <p><strong>Distance:</strong> {{ hotel.distance|floatformat:2 }} meters</p>
+                </li>
+            {% endfor %}
+        {% elif address %}
+            <li>No hotels found for the searched address.</li>
+        {% else %}
+            <li>Please enter an address to search for hotels.</li>
+        {% endif %}
+    </ul> {% endcomment %}
+    <ul>
+        {% if address and hotels %}
+            {% for hotel in hotels %}
+                <li>
+                    <h2>{{ hotel.name }}</h2>
+                    <p><strong>Address:</strong> {{ hotel.address }}</p>
+                    <p><strong>Reviews:</strong> {{ hotel.reviews }}</p>
+                    <p><strong>Rating:</strong> {{ hotel.rating }}</p>
+                    {% if hotel.image %}
+                        <img src="{{ hotel.image.url }}" alt="{{ hotel.name }}" width="200" />
+                    {% endif %}
+                    <p><strong>Distance:</strong> {{ hotel.distance|floatformat:2 }} meters</p>
+                </li>
+            {% endfor %}
+        {% elif address %}
+            <li>No hotels found for the searched address.</li>
+        {% else %}
+            <li>Please enter an address to search for hotels.</li>
+        {% endif %}
+    </ul>
+    
+    
+
+
+{% comment %} <form method="GET" action="{% url 'hotel:hotel_hotels' %}">
+    <input type="text" name="address" placeholder="Enter an address" value="{{ address }}">
+    <button type="submit">Search</button>
+</form> {% endcomment %}
+
+{% comment %} <ul>
+    {% if hotels %}
+        {% for hotel in hotels %}
+            <li>
+                <h2>{{ hotel.name }}</h2>
+                <p><strong>Address:</strong> {{ hotel.address }}</p>
+                <p><strong>Reviews:</strong> {{ hotel.reviews }}</p>
+                <p><strong>Rating:</strong> {{ hotel.rating }}</p>
+                {% if hotel.image %}
+                    <img src="{{ hotel.image.url }}" alt="{{ hotel.name }}" width="200" />
+                {% endif %}
+                <p><strong>Distance:</strong> {{ hotel.distance|floatformat:2 }} meters</p>
+            </li>
+        {% endfor %}
+    {% else %}
+        {% if address %}
+            <li>No hotels found for the searched address.</li>
+        {% else %}
+            <li>Please enter an address to search for hotels.</li>
+        {% endif %}
+    {% endif %}
+</ul> {% endcomment %}
+
+
 
     <div class="fullwidth_block search_categorie_block">
         <div class="container">
@@ -144,137 +229,42 @@
         <div class="container">
             <div class="row slick_carousel_slider">
                 <div class="col-md-12">
-                    <h3 class="headline_part centered margin-bottom-45">Our Popular Tours <span>Explore the greates places in the city</span></h3>
+                    <h3 class="headline_part centered margin-bottom-45">All Available Hotels <span>Explore the greates places in the city</span></h3>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12">
                         <div class="simple_slick_carousel_block utf_dots_nav">
                             
-                            {%for hotel in hotels%}
+                            {% for hotel in hotels %}
                                 <div class="utf_carousel_item">
-                                    <a href="{% url 'hotel:hotel_detail' hotel.slug %}" class="utf_listing_item-container compact">
+                                    <a href="{% if hotel.slug %}{% url 'hotel:hotel_detail' hotel.slug %}{% else %}#{% endif %}" class="utf_listing_item-container compact">
                                         <div class="utf_listing_item">
-                                            <img src="{% static 'images/utf_listing_item-01.jpg' %}" alt="" /> <span class="tag"><i class="im im-icon-Chef-Hat"></i> Restaurant</span> <span class="featured_tag">Featured</span>
+                                            <img src="{{ hotel.image.url }}" alt="" />
+                                            {% if hotel.featured %}
+                                                <span class="featured_tag">Featured</span>
+                                            {% endif %}
+                                            
                                             <span class="utf_open_now">Open Now</span>
                                             <div class="utf_listing_item_content">
                                                 <div class="utf_listing_prige_block">
-                                                    <span class="utf_meta_listing_price"><i class="fa fa-tag"></i> $25 - $55</span>
-                                                    <span class="utp_approve_item"><i class="utf_approve_listing"></i></span>
+                                                    <!-- Add pricing or any other relevant info here -->
                                                 </div>
-                                                <h3>Chontaduro Barcelona</h3>
-                                                <span><i class="fa fa-map-marker"></i> The Ritz-Carlton, Hong Kong</span>
-                                                <span><i class="fa fa-phone"></i> (+15) 124-796-3633</span>
+                                                <h3>{{ hotel.name }}</h3>
+                                                <span><i class="fa fa-phone"></i> {{ hotel.mobile }}</span>
+                                                <span><i class="fa fa-envelope"></i> {{ hotel.email }}</span>
                                             </div>
                                         </div>
                                         <div class="utf_star_rating_section" data-rating="4.5">
-                                            <div class="utf_counter_star_rating">(4.5)</div>
-                                            <span class="utf_view_count"><i class="fa fa-eye"></i> 822+</span>
+                                            <div class="utf_counter_star_rating">({{ hotel.average_rating }}/5.0)</div>
+                                            <span class="utf_view_count"><i class="fa fa-eye"></i> {{ hotel.views }} </span>
                                             <span class="like-icon"></span>
                                         </div>
                                     </a>
                                 </div>
                             {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <section class="fullwidth_block padding-bottom-75">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 col-md-offset-2">
-                    <h2 class="headline_part centered margin-top-80">How It Works? <span class="margin-top-10">Discover & connect with great local businesses</span></h2>
-                </div>
-            </div>
-            <div class="row container_icon">
-                <div class="col-md-4 col-sm-4 col-xs-12">
-                    <div class="box_icon_two box_icon_with_line">
-                        <i class="im im-icon-Map-Marker2"></i>
-                        <h3>Find Interesting Place</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque Nulla finibus.</p>
-                    </div>
-                </div>
-
-                <div class="col-md-4 col-sm-4 col-xs-12">
-                    <div class="box_icon_two box_icon_with_line">
-                        <i class="im im-icon-Mail-Add"></i>
-                        <h3>Contact a Few Owners</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque Nulla finibus.</p>
-                    </div>
-                </div>
-
-                <div class="col-md-4 col-sm-4 col-xs-12">
-                    <div class="box_icon_two">
-                        <i class="im im-icon-Administrator"></i>
-                        <h3>Make a Reservation</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque Nulla finibus.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="utf_testimonial_part fullwidth_block padding-top-75 padding-bottom-75">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 col-md-offset-2">
-                    <h3 class="headline_part centered">
-                        What Say Our Customers <span class="margin-top-15">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has been the industry's standard dummy text ever since...</span>
-                    </h3>
-                </div>
-            </div>
-        </div>
-        <div class="fullwidth_carousel_container_block margin-top-20">
-            <div class="utf_testimonial_carousel testimonials">
-                <div class="utf_carousel_review_part">
-                    <div class="utf_testimonial_box">
-                        <div class="testimonial">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar
-                            nisi tincidunt. Aliquam erat volutpat. Curabitur convallis fringilla diam sed aliquam. Sed tempor iaculis massa faucibus feugiat. In fermentum facilisis massa, a consequat purus viverra.
                         </div>
-                    </div>
-                    <div class="utf_testimonial_author">
-                        <img src="{% static 'images/happy-client-01.jpg' %}" alt="" />
-                        <h4>Denwen Evil <span>Web Developer</span></h4>
-                    </div>
-                </div>
-                <div class="utf_carousel_review_part">
-                    <div class="utf_testimonial_box">
-                        <div class="testimonial">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar
-                            nisi tincidunt. Aliquam erat volutpat. Curabitur convallis fringilla diam sed aliquam. Sed tempor iaculis massa faucibus feugiat. In fermentum facilisis massa, a consequat purus viverra.
-                        </div>
-                    </div>
-                    <div class="utf_testimonial_author">
-                        <img src="{% static 'images/happy-client-02.jpg' %}" alt="" />
-                        <h4>Adam Alloriam <span>Web Developer</span></h4>
-                    </div>
-                </div>
-                <div class="utf_carousel_review_part">
-                    <div class="utf_testimonial_box">
-                        <div class="testimonial">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar
-                            nisi tincidunt. Aliquam erat volutpat. Curabitur convallis fringilla diam sed aliquam. Sed tempor iaculis massa faucibus feugiat. In fermentum facilisis massa, a consequat purus viverra.
-                        </div>
-                    </div>
-                    <div class="utf_testimonial_author">
-                        <img src="{% static 'images/happy-client-03.jpg' %}" alt="" />
-                        <h4>Illa Millia <span>Project Manager</span></h4>
-                    </div>
-                </div>
-                <div class="utf_carousel_review_part">
-                    <div class="utf_testimonial_box">
-                        <div class="testimonial">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar
-                            nisi tincidunt. Aliquam erat volutpat. Curabitur convallis fringilla diam sed aliquam. Sed tempor iaculis massa faucibus feugiat. In fermentum facilisis massa, a consequat purus viverra.
-                        </div>
-                    </div>
-                    <div class="utf_testimonial_author">
-                        <img src="{% static 'images/happy-client-01.jpg' %}" alt="" />
-                        <h4>Denwen Evil <span>Web Developer</span></h4>
                     </div>
                 </div>
             </div>

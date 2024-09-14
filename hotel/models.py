@@ -9,6 +9,7 @@ from django.utils.html import mark_safe
 from django.core.validators import MinValueValidator, MaxValueValidator
 from taggit.managers import TaggableManager
 import shortuuid
+import requests
  
 
 HOTEL_STATUS = (
@@ -54,34 +55,115 @@ PAYMENT_STATUS = (
 )
 
 # Create your models here.
+# class Hotel(models.Model):
+#     user =models.ForeignKey(User, on_delete= models.SET_NULL, null= True, related_name='create_hotel')
+#     name = models.CharField(max_length=100)
+#     description = CKEditor5Field(config_name='extends', null=True, blank=True)
+#     image = models.FileField(upload_to="hotel_gallery")
+#     address = models.CharField(max_length=200)
+#     mobile = models.CharField(max_length=20)
+#     email = models.CharField(max_length=20)
+#     status = models.CharField(choices=HOTEL_STATUS, max_length=10, default="Live", null=True, blank=True)
+
+
+#     tags = TaggableManager(blank = True)
+#     views = models.IntegerField(default=0)
+#     featured = models.BooleanField(default=False)
+#     hid = ShortUUIDField(unique=True, length=10, max_length=20, alphabet="abcdefghijklmnopqrstuvxyz")
+#     slug = models.SlugField(unique=True)
+#     date = models.DateTimeField(auto_now_add=True)
+
+
+#     def __str__(self):
+#         return self.name
+    
+#     def save(self, *args, **kwargs):
+#         if self.slug == "" or self.slug == None:
+#             uuid_key = shortuuid.uuid()
+#             uniqueid = uuid_key[:4]
+#             self.slug = slugify(self.name) + "-" + str(uniqueid.lower())
+            
+#         super(Hotel, self).save(*args, **kwargs)
+
+#     def thumbnail(self):
+#         return mark_safe('<img src="%s" width="50px" height="50px" style="object-fit:cover; border-radius: 6px;" />' % (self.image.url))
+
+#     def hotel_gallery(self):
+#         return HotelGallery.objects.filter(hotel=self)
+    
+#     # def hotel_features(self):
+#     #     return HotelFeatures.objects.filter(hotel=self)
+
+#     # def hotel_faqs(self):
+#     #     return HotelFAQs.objects.filter(hotel=self)
+
+#     def hotel_room_types(self):
+#         return RoomType.objects.filter(hotel=self)
+    
+#     def average_rating(self):
+#         average_rating = Review.objects.filter(hotel=self).aggregate(avg_rating=models.Avg("rating"))
+#         return average_rating['avg_rating']
+    
+#     def rating_count(self):
+#         rating_count = Review.objects.filter(hotel=self).count()
+#         return rating_count
+    
+#     # Add the save method with hotel validation
+#     def save(self, *args, **kwargs):
+#         if not self.user:
+#             raise ValueError("user must be provided.")
+#         super().save(*args, **kwargs)
+
+import shortuuid
+from django.utils.text import slugify
+
+GEOAPIFY_API_KEY = 'b6c977ce7ff54985a263958fcb4ca782'
+
+def geocode_address(address):
+    url = f'https://api.geoapify.com/v1/geocode/search?text={address}&apiKey={b6c977ce7ff54985a263958fcb4ca782}'
+    response = requests.get(url)
+    data = response.json()
+    
+    if len(data['features']) > 0:
+        coordinates = data['features'][0]['geometry']['coordinates']
+        return coordinates[1], coordinates[0]  # returns latitude, longitude
+    return None, None
+
 class Hotel(models.Model):
-    user =models.ForeignKey(User, on_delete= models.SET_NULL, null= True)
+    # user = mob6c977ce7ff54985a263958fcb4ca782dels.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='create_hotel')
     name = models.CharField(max_length=100)
     description = CKEditor5Field(config_name='extends', null=True, blank=True)
     image = models.FileField(upload_to="hotel_gallery")
     address = models.CharField(max_length=200)
+    latitude = models.FloatField(null=True, blank=True)  # Auto-populated after geocoding
+    longitude = models.FloatField(null=True, blank=True)
     mobile = models.CharField(max_length=20)
     email = models.CharField(max_length=20)
     status = models.CharField(choices=HOTEL_STATUS, max_length=10, default="Live", null=True, blank=True)
 
-
-    tags = TaggableManager(blank = True)
+    tags = TaggableManager(blank=True)
     views = models.IntegerField(default=0)
     featured = models.BooleanField(default=False)
     hid = ShortUUIDField(unique=True, length=10, max_length=20, alphabet="abcdefghijklmnopqrstuvxyz")
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, blank=True)  # Allow blank slugs
     date = models.DateTimeField(auto_now_add=True)
-
 
     def __str__(self):
         return self.name
-    
+
+    # Single save method to handle slug generation and user validation
     def save(self, *args, **kwargs):
-        if self.slug == "" or self.slug == None:
+        # Ensure the user is provided
+        if not self.user:
+            raise ValueError("User must be provided.")
+        
+        # Generate the slug if it is not already set
+        if not self.slug:
             uuid_key = shortuuid.uuid()
             uniqueid = uuid_key[:4]
             self.slug = slugify(self.name) + "-" + str(uniqueid.lower())
-            
+
         super(Hotel, self).save(*args, **kwargs)
 
     def thumbnail(self):
@@ -89,24 +171,21 @@ class Hotel(models.Model):
 
     def hotel_gallery(self):
         return HotelGallery.objects.filter(hotel=self)
-    
-    # def hotel_features(self):
-    #     return HotelFeatures.objects.filter(hotel=self)
-
-    # def hotel_faqs(self):
-    #     return HotelFAQs.objects.filter(hotel=self)
 
     def hotel_room_types(self):
         return RoomType.objects.filter(hotel=self)
-    
+
     def average_rating(self):
         average_rating = Review.objects.filter(hotel=self).aggregate(avg_rating=models.Avg("rating"))
         return average_rating['avg_rating']
-    
+
     def rating_count(self):
         rating_count = Review.objects.filter(hotel=self).count()
         return rating_count
-       
+
+# class HotelOwner():
+#     is_hotel_owner = models.BooleanField(default=False)
+
 
 class HotelGallery(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
@@ -118,6 +197,12 @@ class HotelGallery(models.Model):
 
     class Meta:
         verbose_name_plural = "Hotel Gallery"
+
+    # Add the save method with hotel validation
+    def save(self, *args, **kwargs):
+        if not self.hotel:
+            raise ValueError("Hotel must be provided.")
+        super().save(*args, **kwargs)
 
 class HotelFeatures(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
@@ -132,6 +217,12 @@ class HotelFeatures(models.Model):
     class Meta:
         verbose_name_plural = "Hotel Features"
 
+    # Add the save method with hotel validation
+    def save(self, *args, **kwargs):
+        if not self.hotel:
+            raise ValueError("Hotel must be provided.")
+        super().save(*args, **kwargs)
+
 class HotelFaqs(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
     question = models.CharField(max_length=1000)
@@ -144,6 +235,11 @@ class HotelFaqs(models.Model):
     
     class Meta:
         verbose_name_plural = "Hotel FAQs"
+    # Add the save method with hotel validation
+    def save(self, *args, **kwargs):
+        if not self.hotel:
+            raise ValueError("Hotel must be provided.")
+        super().save(*args, **kwargs)
 
 class RoomType(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
@@ -163,14 +259,33 @@ class RoomType(models.Model):
 
     def rooms_count(self):
         Room.objects.filter(room_type=self).count()
-    
-    def save(self, *args, **kwargs):
-        if self.slug == "" or self.slug == None:
-            uuid_key = shortuuid.uuid()
-            uniqueid = uuid_key[:4]
-            self.slug = slugify(self.type) + "-" + str(uniqueid.lower())
+
+    # def save(self, *args, **kwargs):
+    #     if not self.slug:
+    #         base_slug = slugify(self.name)
+    #         uniqueid = shortuuid.uuid()[:4]
+    #         self.slug = f"{base_slug}-{uniqueid.lower()}"
             
-        super(RoomType, self).save(*args, **kwargs) 
+    #         # Check for uniqueness
+    #         while Hotel.objects.filter(slug=self.slug).exists():
+    #             uniqueid = shortuuid.uuid()[:4]
+    #             self.slug = f"{base_slug}-{uniqueid.lower()}"
+        
+    #     super(Hotel, self).save(*args, **kwargs)
+    
+    # def save(self, *args, **kwargs):
+    #     if self.slug == "" or self.slug == None:
+    #         uuid_key = shortuuid.uuid()
+    #         uniqueid = uuid_key[:4]
+    #         self.slug = slugify(self.type) + "-" + str(uniqueid.lower())
+            
+    #     super(RoomType, self).save(*args, **kwargs)
+    
+    # Add the save method with hotel validation
+    def save(self, *args, **kwargs):
+        if not self.hotel:
+            raise ValueError("Hotel must be provided.")
+        super().save(*args, **kwargs)
 
 
 class Room(models.Model):
@@ -192,6 +307,12 @@ class Room(models.Model):
     
     def number_of_beds(self):
         return self.room_type.number_of_beds
+    
+    # Add the save method with hotel validation
+    def save(self, *args, **kwargs):
+        if not self.hotel:
+            raise ValueError("Hotel must be provided.")
+        super().save(*args, **kwargs)
 
 
 class Coupon(models.Model):
@@ -212,6 +333,7 @@ class Coupon(models.Model):
     
     class Meta:
         ordering =['-id']
+
 
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
@@ -257,6 +379,12 @@ class Booking(models.Model):
     
     def rooms(self):
         return self.room.all().count()
+    
+    # Add the save method with hotel validation
+    def save(self, *args, **kwargs):
+        if not self.user:
+            raise ValueError("User must be provided.")
+        super().save(*args, **kwargs)
 
 class ActivityLog(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
@@ -267,6 +395,11 @@ class ActivityLog(models.Model):
 
     def __str__(self):
         return f"(self.booking)"
+    # Add the save method with hotel validation
+    def save(self, *args, **kwargs):
+        if not self.booking:
+            raise ValueError("Booking must be provided.")
+        super().save(*args, **kwargs)
 
 class CouponUsers(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
@@ -281,6 +414,11 @@ class CouponUsers(models.Model):
     
     class Meta:
         ordering =['-id']
+    # Add the save method with hotel validation
+    def save(self, *args, **kwargs):
+        if not self.booking:
+            raise ValueError("Booking must be provided.")
+        super().save(*args, **kwargs)
 
 
 class StaffOnDuty(models.Model):
@@ -290,6 +428,12 @@ class StaffOnDuty(models.Model):
 
     def __str__(self):
         return str(self.staff_id)
+    
+    # Add the save method with hotel validation
+    def save(self, *args, **kwargs):
+        if not self.booking:
+            raise ValueError("Booking must be provided.")
+        super().save(*args, **kwargs)
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="user")
@@ -305,6 +449,12 @@ class Notification(models.Model):
     class Meta:
         ordering = ['-date']
 
+    # Add the save method with hotel validation
+    def save(self, *args, **kwargs):
+        if not self.user:
+            raise ValueError("user must be provided.")
+        super().save(*args, **kwargs)
+
 
 class Bookmark(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -317,6 +467,11 @@ class Bookmark(models.Model):
     
     class Meta:
         ordering = ['-date']
+    # Add the save method with hotel validation
+    def save(self, *args, **kwargs):
+        if not self.user:
+            raise ValueError("user must be provided.")
+        super().save(*args, **kwargs)
 
 
 # class Review(models.Model):
@@ -353,4 +508,8 @@ class Review(models.Model):
         
     def __str__(self):
         return f"{self.user.username} - {self.rating}"
-        
+    # Add the save method with hotel validation
+    def save(self, *args, **kwargs):
+        if not self.user:
+            raise ValueError("user must be provided.")
+        super().save(*args, **kwargs)

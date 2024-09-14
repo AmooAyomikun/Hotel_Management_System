@@ -14,6 +14,10 @@
             <div class="utf_error_description_part utf_ferror_description">  
                 <span class="f-primary animated v fadeInRight">We have sent your booking summary to <b>{{ booking.email }}</b> Your booking id is <b>{{booking.booking_id}}</b> Thank you.</span> 
             </div>
+            <div><a href="{% url 'user_dashboard:profile' %}">
+
+              <button type="submit" class="button utf_booking_confirmation_button margin-top-20 w-100 " style="background-color: orange; color: rgb(37, 28, 3);">Proceed To Your Dashboard.</button></a>	
+            </div>
             {% comment %} <a href="{% url 'hotel:invoice' booking.booking_id %}" class="button margin-top-20">Visit Dashboard</a> {% endcomment %}
             {% comment %} <a href="{% url 'hotel:invoice' booking.booking_id %}" target="_blank" class="button margin-top-20">View Invoice 🧾</a> {% endcomment %}
             <div class="row">

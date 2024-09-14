@@ -59,7 +59,7 @@
                     <div class="container">
                         <div class="utf_left_side">
                             <div id="logo">
-                                <a href="index_1.html"><img src="{% static 'images/logo.png' %}" alt="" /></a>
+                                <a href="index_1.html"><img src="{% static 'images/logoo.png' %}" alt="" /></a>
                             </div>
                             <div class="mmenu-trigger">
                                 <button class="hamburger utfbutton_collapse" type="button">
@@ -73,14 +73,15 @@
                                     <li><a class="current" href="/">Home</a></li>
                                     <li>
                                         <a href="#">Hotels</a>
-                                        <ul>
+                                        {% comment %} <ul>
                                             <li><a href="#">Ilaju Hotel</a></li>
                                             <li><a href="#">Ilaju Hotel</a></li>
                                             <li><a href="#">Ilaju Hotel</a></li>  
-                                        </ul>
+                                        </ul> {% endcomment %}
                                     </li>
-                                    <li><a href="#">Dashboard</a></li>
+                                    <li><a href="{% url 'user_dashboard:dashboard' %}">Dashboard</a></li>
                                     <li><a href="#">Blog</a></li>
+                                    <li><a href="{% url 'hotel:hotelier_add_hotel' %}">Hotel Owners</a></li>
                                 </ul>
                             </nav>
                             <div class="clearfix"></div>
@@ -156,7 +157,7 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="footer_copyright_part">Copyright © 2022 All Rights Reserved.</div>
+                            <div class="footer_copyright_part">Copyright © 2024 All Rights Reserved Ayomikun.</div>
                         </div>
                     </div>
                 </div>

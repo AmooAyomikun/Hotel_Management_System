@@ -15,7 +15,7 @@
                 <div class="col-lg-6 col-md-12 col-sm-12">
                     <div class="utf_dashboard_stat color-5">
                         <div class="utf_dashboard_stat_content">
-                            <h4>${{total_spent.amount|floatformat:2}}</h4>
+                            <h4>₦{{total_spent.amount|floatformat:2}}</h4>
                             <span>Total Spent</span>
                         </div>
                         <div class="utf_dashboard_stat_icon"><i class="fas fa-dollar"></i></div>
@@ -25,7 +25,7 @@
                 <div class="col-lg-6 col-md-12 col-sm-12">
                     <div class="utf_dashboard_stat color-2">
                         <div class="utf_dashboard_stat_content">
-                            <h4>${{wallet_balance}}</h4>
+                            <h4>₦{{wallet_balance}}</h4>
                             <span>Wallet Balance</span>
                         </div>
                         <div class="utf_dashboard_stat_icon"><i class="fas fa-wallet"></i></div>
@@ -40,11 +40,11 @@
                         <ul>
                             
                             {% for b in bookings %}
-                                <li><i class="fas fa-receipt"></i> <strong>{{b.hotel.name}} <span class="paid">{{b.payment_status|title}} ${{ b.total|floatformat:2 }}</span></strong>
+                                <li><i class="fas fa-receipt"></i> <strong>{{b.hotel.name}} <span class="paid">{{b.payment_status|title}} #{{ b.total|floatformat:2 }}</span></strong>
                                     <ul>
                                         <li><span>Order Number: </span> {{b.booking_id}}</li>
                                         <li><span>Date: </span> {{b.date|date:"d M, Y"}}</li>
-                                        <li><span>Spent: </span> ${{ b.total|floatformat:2 }}</li>
+                                        <li><span>Spent: </span> ₦{{ b.total|floatformat:2 }}</li>
                                     </ul>
                                 </li>
                             {% endfor %}

@@ -10,8 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import dj_database_url
 from pathlib import Path
 import os
+# from decouple  import config
+
 
 from environs  import Env
 
@@ -59,10 +62,6 @@ INSTALLED_APPS = [
     'import_export',
     'crispy_forms',
     'taggit',
-    
-    
-
-
 ]
 
 TAGGIT_CASE_INSENSITIVE = True
@@ -103,11 +102,10 @@ WSGI_APPLICATION = 'HMS.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'default': dj_database_url.config(
+        default='postgresql://hoteldb_xs48_user:pxFsjsSUDYkiC9fknWmUZANv4d1sKtCz@dpg-crdn8tlds78s73dkod1g-a.oregon-postgres.render.com/hoteldb_xs48'
+        ),
     }
-}
 
 
 
@@ -129,7 +127,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = " userauths.User "
+AUTH_USER_MODEL = "userauths.User "
 
 
 # Internationalization
@@ -143,7 +141,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+GEOAPIFY_API_KEY = 'b6c977ce7ff54985a263958fcb4ca782'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 

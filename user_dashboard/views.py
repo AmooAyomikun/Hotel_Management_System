@@ -10,21 +10,39 @@ from userauths.forms import ProfileUpdateForm, UserUpdateForm
 
 
 
+# @login_required
+# def dashboard(request):
+#     bookings = Booking.objects.filter(user=request.user, payment_status="paid")
+#     total_spent = Booking.objects.filter(user=request.user, payment_status="paid").aggregate(amount=models.Sum('total'))
+
+#     print("bookings ========", total_spent)
+#     context = {
+#         "bookings":bookings,
+#         "total_spent":total_spent,
+#     }
+#     return render(request, "user_dashboard/dashboard.html", context)
+
 @login_required
 def dashboard(request):
-    bookings = Booking.objects.filter(user=request.user, payment_status="paid")
-    total_spent = Booking.objects.filter(user=request.user, payment_status="paid").aggregate(amount=models.Sum('total'))
+    bookings = Booking.objects.filter(user=request.user)
+    total_spent = Booking.objects.filter(user=request.user).aggregate(amount=models.Sum('total'))
+    # total_spent_amount = total_spent['amount'] if total_spent['amount'] is not None else 0
+    
+    # if request.user =="POST":
+    print(f"bookings: {bookings.count}")
+    print(f"total_spent: {total_spent}")
+# Handle None value for total_spent
 
-    # print("bookings ========", total_spent)
     context = {
-        "bookings":bookings,
-        "total_spent":total_spent,
+        "bookings": bookings,
+        "total_spent": total_spent,  # pass the checked amount
     }
     return render(request, "user_dashboard/dashboard.html", context)
 
 @login_required
 def bookings(request):
     bookings = Booking.objects.filter(user=request.user, payment_status="paid")
+    print(bookings)
 
     context = {
         "bookings":bookings,

@@ -116,3 +116,30 @@ def LogoutView(request):
     messages.success(request, 'You have been logged out')
     return redirect("userauths:sign-in")
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import HotelForm
+
+@login_required
+def add_hotel(request):
+    """
+    View to handle the creation of a new hotel by a hotel owner.
+    Only accessible to authenticated users.
+    """
+    if request.method == 'POST':
+        form = HotelForm(request.POST, request.FILES)
+        if form.is_valid():
+            hotel = form.save(commit=False)
+            hotel.user = request.user  # Assign the logged-in user as the hotel owner
+            hotel.save()
+            form.save_m2m()  # Save the many-to-many data for tags
+            messages.success(request, 'Hotel added successfully!')
+            return redirect('hotel_list')  # Replace with your actual redirect target
+        else:
+            messages.error(request, 'Error adding hotel. Please check the form.')
+    else:
+        form = HotelForm()
+    return render(request, 'hotel/hotelier_add_hotel.html', {'form': form})
+
+

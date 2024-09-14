@@ -39,7 +39,7 @@
                                       </small> 
                                     </h5>
                                     <p><strong>Beds :</strong> {{item.number_of_beds}}  </p>
-                                    <span>${{item.room_price}} </span>
+                                    <span>₦{{item.room_price}} </span>
                                 </li>
                             {% endfor %}
                         </ul>
@@ -142,8 +142,8 @@
 			<li>Total Days <span>{{total_days}} Days</span></li>            
             <li>Adults <span>{{ adult }} Adult</span></li>
             <li>Children <span>{{ children }} Children</span></li>
-			      <li>V.A.T <span>$0.00</span></li>
-            <li class="total-costs">Total Cost <span>${{total}}</span></li>
+			      <li>V.A.T <span>₦0.00</span></li>
+            <li class="total-costs">Total Cost <span>₦{{total}}</span></li>
           </ul>
         </div>
       </div>
