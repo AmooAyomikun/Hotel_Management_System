@@ -1,4 +1,4 @@
-set -o crrexit
+set -o errexit
 
 pip install -r requirements.txt
 
