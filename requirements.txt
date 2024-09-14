@@ -12,6 +12,7 @@ django-taggit==6.0.0
 environs==11.0.0
 geographiclib==2.0
 geopy==2.4.1
+gunicorn==23.0.0
 idna==3.9
 import-export==0.3.1
 marshmallow==3.22.0
@@ -27,3 +28,4 @@ tablib==3.5.0
 typing_extensions==4.12.2
 tzdata==2024.1
 urllib3==2.2.3
+whitenoise==6.7.0
