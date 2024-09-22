@@ -13,8 +13,9 @@
                     <div class="col-md-12">
                         <h2>Book Unique Experiences</h2>
                         <h4>Discover top rated hotels, shops and restaurants around the world</h4>
+                        {% csrf_token%}
                         <form action="{% url 'hotel:hotel_hotels' %}" method="GET">
-                            {% csrf_token%}
+                            
                             <div class="main_input_search_part">
                                 <div class="main_input_search_part_item">
                                     <input type="text" placeholder="Enter address" required name= "address" />
@@ -29,99 +30,67 @@
             </div>
         </div>
     </div>
-    {% comment %} <ul>
-        {% if address and hotels %}
-            {% for hotel in hotels %}
-                <li>
-                    <h2>{{ hotel.name }}</h2>
-                    <p><strong>Address:</strong> {{ hotel.address }}</p>
-                    <p><strong>Reviews:</strong> {{ hotel.reviews }}</p>
-                    <p><strong>Rating:</strong> {{ hotel.rating }}</p>
-                    {% if hotel.image %}
-                        <img src="{{ hotel.image.url }}" alt="{{ hotel.name }}" width="200" />
-                    {% endif %}
-                    <p><strong>Distance:</strong> {{ hotel.distance|floatformat:2 }} meters</p>
-                </li>
-            {% endfor %}
-        {% elif address %}
-            <li>No hotels found for the searched address.</li>
-        {% else %}
-            <li></li>
-        {% endif %}
-    </ul> {% endcomment %}
-    {% comment %} <ul>
-        {% if address and hotels %}
-            {% for hotel in hotels %}
-                <li>
-                    <h2>{{ hotel.name }}</h2>
-                    <p><strong>Address:</strong> {{ hotel.address }}</p>
-                    <p><strong>Reviews:</strong> {{ hotel.reviews }}</p>
-                    <p><strong>Rating:</strong> {{ hotel.rating }}</p>
-                    {% if hotel.image %}
-                        <img src="{{ hotel.image }}" alt="{{ hotel.name }}" width="200" />
-                    {% endif %}
-                    <p><strong>Distance:</strong> {{ hotel.distance|floatformat:2 }} meters</p>
-                </li>
-            {% endfor %}
-        {% elif address %}
-            <li>No hotels found for the searched address.</li>
-        {% else %}
-            <li>Please enter an address to search for hotels.</li>
-        {% endif %}
-    </ul> {% endcomment %}
-    <ul>
-        {% if address and hotels %}
-            {% for hotel in hotels %}
-                <li>
-                    <h2>{{ hotel.name }}</h2>
-                    <p><strong>Address:</strong> {{ hotel.address }}</p>
-                    <p><strong>Reviews:</strong> {{ hotel.reviews }}</p>
-                    <p><strong>Rating:</strong> {{ hotel.rating }}</p>
-                    {% if hotel.image %}
-                        <img src="{{ hotel.image.url }}" alt="{{ hotel.name }}" width="200" />
-                    {% endif %}
-                    <p><strong>Distance:</strong> {{ hotel.distance|floatformat:2 }} meters</p>
-                </li>
-            {% endfor %}
-        {% elif address %}
-            <li>No hotels found for the searched address.</li>
-        {% else %}
-            <li>Please enter an address to search for hotels.</li>
-        {% endif %}
-    </ul>
-    
-    
 
-
-{% comment %} <form method="GET" action="{% url 'hotel:hotel_hotels' %}">
-    <input type="text" name="address" placeholder="Enter an address" value="{{ address }}">
-    <button type="submit">Search</button>
-</form> {% endcomment %}
-
-{% comment %} <ul>
-    {% if hotels %}
-        {% for hotel in hotels %}
-            <li>
-                <h2>{{ hotel.name }}</h2>
-                <p><strong>Address:</strong> {{ hotel.address }}</p>
-                <p><strong>Reviews:</strong> {{ hotel.reviews }}</p>
-                <p><strong>Rating:</strong> {{ hotel.rating }}</p>
-                {% if hotel.image %}
-                    <img src="{{ hotel.image.url }}" alt="{{ hotel.name }}" width="200" />
-                {% endif %}
-                <p><strong>Distance:</strong> {{ hotel.distance|floatformat:2 }} meters</p>
-            </li>
-        {% endfor %}
+    <h3 class="mt-4">Search Results</h3>
+    {% if address and hotels %}
+        <div class="row">
+            {% for hotel in hotels %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        {% if hotel.image %}
+                            {% comment %} <img src="{{ hotel.image }}" class="card-img-top" alt="{{ hotel.name }}"> {% endcomment %}
+                        {% else %}
+                            {% comment %} <img src="{% static 'images/default_hotel.jpg' %}" class="card-img-top" alt="Default Hotel Image"> {% endcomment %}
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ hotel.name }}</h5>
+                            <p class="card-text">{{ hotel.address }}</p>
+                            <p class="card-text">Rating: {{ hotel.rating }}</p>
+                            <p class="card-text">Reviews: {{ hotel.reviews }}</p>
+                            {% if hotel.distance %}
+                                <p class="card-text">Distance: {{ hotel.distance|floatformat:2 }} meters</p>
+                            {% endif %}
+                            <a href="{% url 'hotel:hotel_detail' hotel.slug %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
-        {% if address %}
+        <p>No hotels found for the given address.</p>
+    {% endif %}
+</div>
+
+    
+    {% comment %} <ul>
+        {% if address and hotels %}
+            {% for hotel in hotels %}
+                <li>
+                    <h2>{{ hotel.name }}</h2>
+    
+                    <!-- Only generate the link if the hotel has a slug -->
+                    {% if hotel.slug %}
+                        <a href="{% url 'hotel:hotel_detail' hotel.slug %}">View Details</a>
+                    {% else %}
+                        <span>Details not available</span>
+                    {% endif %}
+                    
+                    <p><strong>Address:</strong> {{ hotel.address }}</p>
+                    <p><strong>Reviews:</strong> {{ hotel.reviews }}</p>
+                    <p><strong>Rating:</strong> {{ hotel.rating }}</p>
+    
+                    {% if hotel.image %}
+                        <img src="{{ hotel.image.url }}" alt="{{ hotel.name }}" width="200" />
+                    {% endif %}
+                </li>
+            {% endfor %}
+        {% elif address %}
             <li>No hotels found for the searched address.</li>
         {% else %}
             <li>Please enter an address to search for hotels.</li>
         {% endif %}
-    {% endif %}
-</ul> {% endcomment %}
-
-
+    </ul> {% endcomment %}
+    
 
     <div class="fullwidth_block search_categorie_block">
         <div class="container">
@@ -145,7 +114,7 @@
                                 <img src="{% static 'images/category-box-01.jpg' %}" alt="" />
                                 <span class="category_item_box_btn">Browse</span>
                                 <div class="category_content_box_part">
-                                    <h3>New York City</h3>
+                                    <h3>Iwo-Road</h3>
                                     <span>15 listings</span>
                                 </div>
                             </a>
@@ -158,7 +127,7 @@
                                 <img src="{% static 'images/category-box-02.jpg' %}" alt="" />
                                 <span class="category_item_box_btn">Browse</span>
                                 <div class="category_content_box_part">
-                                    <h3>Chicago</h3>
+                                    <h3>Bodija</h3>
                                     <span>27 Listings</span>
                                 </div>
                             </a>
@@ -171,7 +140,7 @@
                                 <img src="{% static 'images/category-box-03.jpg' %}" alt="" />
                                 <span class="category_item_box_btn">Browse</span>
                                 <div class="category_content_box_part">
-                                    <h3>Los Angeles</h3>
+                                    <h3>Mokola</h3>
                                     <span>22 Listings</span>
                                 </div>
                             </a>
@@ -184,7 +153,7 @@
                                 <img src="{% static 'images/category-box-04.jpg' %}" alt="" />
                                 <span class="category_item_box_btn">Browse</span>
                                 <div class="category_content_box_part">
-                                    <h3>San Francisco</h3>
+                                    <h3>Apata</h3>
                                     <span>15 Listings</span>
                                 </div>
                             </a>
@@ -200,7 +169,7 @@
                                 <img src="{% static 'images/category-box-05.jpg' %}" alt="" />
                                 <span class="category_item_box_btn">Browse</span>
                                 <div class="category_content_box_part">
-                                    <h3>Washington</h3>
+                                    <h3>Sango</h3>
                                     <span>26 Listings</span>
                                 </div>
                             </a>
@@ -213,7 +182,7 @@
                                 <img src="{% static 'images/category-box-06.jpg' %}" alt="" />
                                 <span class="category_item_box_btn">Browse</span>
                                 <div class="category_content_box_part">
-                                    <h3>Seattle</h3>
+                                    <h3>Olodo</h3>
                                     <span>27 Listings</span>
                                 </div>
                             </a>

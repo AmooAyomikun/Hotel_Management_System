@@ -146,8 +146,14 @@ class Hotel(models.Model):
     views = models.IntegerField(default=0)
     featured = models.BooleanField(default=False)
     hid = ShortUUIDField(unique=True, length=10, max_length=20, alphabet="abcdefghijklmnopqrstuvxyz")
-    slug = models.SlugField(unique=True, blank=True)  # Allow blank slugs
+    # slug = models.SlugField(unique=True, blank=True)  # Allow blank slugs
+    slug = models.SlugField(unique=True, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

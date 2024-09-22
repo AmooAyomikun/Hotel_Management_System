@@ -60,7 +60,8 @@ def hotel_detail(request, slug):
         "reviews":reviews,
         "all_reviews":all_reviews,
      }
-    return render(request, "hotel/hotel_detail.html", context)
+    return render(request, 'hotel/hotel_detail.html', {'hotel': hotel})
+    # return render(request, "hotel/hotel_detail.html", context)
 
 
 def room_type_detail(request, slug, rt_slug):
@@ -646,22 +647,79 @@ from hotel.management.commands.update_coordinates import geocode_address
 #         'address': address,
 #     }
 #     return render(request, "hotel/hotel.html", context)
-import requests
-from django.conf import settings
+# import requests
+# from django.conf import settings
+# from django.shortcuts import render
+# from .models import Hotel
+# # from hotel.management.commands.update_coordinates import geocode_address
+# from geopy.distance import geodesic  
+
+# def search_hotels_view(request):
+#     address = request.GET.get('address', '')  # Get the entered address
+#     hotels = Hotel.objects.filter(address__icontains=address) if address else Hotel.objects.all()
+    
+#     if not hotels.exists() and address:
+#         lat, lon = geocode_address(address)  # Get latitude and longitude of the address
+        
+#         if lat and lon:
+#             # Find the nearest hotel in the database to the searched address
+#             nearest_hotel = find_nearest_hotel(lat, lon)
+#             if nearest_hotel:
+#                 hotels = [{
+#                     'name': nearest_hotel.name,
+#                     'address': nearest_hotel.address,
+#                     'reviews': 'N/A',
+#                     'rating': 'N/A',
+#                     'distance': calculate_distance(lat, lon, nearest_hotel.latitude, nearest_hotel.longitude),
+#                     'image': None
+#                 }]
+#             else:
+#                 hotels = []  # No hotels found in the database
+#         else:
+#             hotels = []  # No latitude/longitude available for the searched address
+#     else:
+#         # Convert queryset to list of dictionaries for rendering
+#         hotels = [{
+#             'name': hotel.name,
+#             'address': hotel.address,
+#             'reviews': 'N/A',
+#             'rating': 'N/A',
+#             'distance': 0,
+#             'image': None
+#         } for hotel in hotels]
+    
+#     context = {
+#         'hotels': hotels,
+#         'address': address,
+#     }
+#     return render(request, "hotel/hotel.html", context)
+
+# def find_nearest_hotel(lat, lon):
+#     nearest_hotel = None
+#     min_distance = float('inf')
+#     for hotel in Hotel.objects.all():
+#         distance = calculate_distance(lat, lon, hotel.latitude, hotel.longitude)
+#         if distance < min_distance:
+#             min_distance = distance
+#             nearest_hotel = hotel
+#     return nearest_hotel
+
+# def calculate_distance(lat1, lon1, lat2, lon2):
+#     return geodesic((lat1, lon1), (lat2, lon2)).meters
+
 from django.shortcuts import render
 from .models import Hotel
-# from hotel.management.commands.update_coordinates import geocode_address
-from geopy.distance import geodesic  
+from hotel.management.commands.update_coordinates import geocode_address
+from geopy.distance import geodesic
 
 def search_hotels_view(request):
-    address = request.GET.get('address', '')  # Get the entered address
+    address = request.GET.get('address', '')
     hotels = Hotel.objects.filter(address__icontains=address) if address else Hotel.objects.all()
     
     if not hotels.exists() and address:
-        lat, lon = geocode_address(address)  # Get latitude and longitude of the address
+        lat, lon = geocode_address(address)
         
         if lat and lon:
-            # Find the nearest hotel in the database to the searched address
             nearest_hotel = find_nearest_hotel(lat, lon)
             if nearest_hotel:
                 hotels = [{
@@ -670,21 +728,22 @@ def search_hotels_view(request):
                     'reviews': 'N/A',
                     'rating': 'N/A',
                     'distance': calculate_distance(lat, lon, nearest_hotel.latitude, nearest_hotel.longitude),
-                    'image': None
+                    'image': nearest_hotel.image.url if nearest_hotel.image else None,
+                    'slug': nearest_hotel.slug  # Add the slug for linking to detail page
                 }]
             else:
-                hotels = []  # No hotels found in the database
+                hotels = []
         else:
-            hotels = []  # No latitude/longitude available for the searched address
+            hotels = []
     else:
-        # Convert queryset to list of dictionaries for rendering
         hotels = [{
             'name': hotel.name,
             'address': hotel.address,
             'reviews': 'N/A',
             'rating': 'N/A',
             'distance': 0,
-            'image': None
+            'image': hotel.image.url if hotel.image else None,
+            'slug': hotel.slug  # Add the slug for linking to detail page
         } for hotel in hotels]
     
     context = {
