@@ -104,7 +104,7 @@ WSGI_APPLICATION = 'HMS.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://hoteldb_xs48_user:pxFsjsSUDYkiC9fknWmUZANv4d1sKtCz@dpg-crdn8tlds78s73dkod1g-a.oregon-postgres.render.com/hoteldb_xs48'
+        default='postgresql://hotelmanagementsystem_user:dTUtp3AD0nT7TVACmjR7RMweBT8fnvDG@dpg-cs34q63v2p9s738shi80-a.oregon-postgres.render.com/hotelmanagementsystem'
         ),
     }
 
